@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Pathway Explorer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #f59e0b;
+            --success: #10b981;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        /* Home View - Career Cards */
+        .pathway-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .pathway-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            border: 2px solid transparent;
+        }
+
+        .pathway-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .pathway-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .pathway-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .pathway-card p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Detail View */
+        .detail-view {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .detail-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .back-button {
+            background: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .back-button:hover {
+            transform: translateX(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .pathway-content {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .pathway-header {
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .pathway-header h2 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .pathway-header .subtitle {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        /* Timeline Steps */
+        .step-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .step-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .step-number {
+            background: white;
+            color: var(--primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.25rem;
+        }
+
+        .step-header h3 {
+            font-size: 1.3rem;
+        }
+
+        .step-content {
+            padding: 1rem 1.5rem;
+        }
+
+        .step-intro {
+            background: #f1f5f9;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        /* Program Cards */
+        .program-card {
+            background: #f8fafc;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .program-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .program-card h4 {
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .program-badge {
+            background: var(--secondary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .program-details {
+            margin: 1rem 0;
+        }
+
+        .program-details ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .program-details li {
+            padding: 0.5rem 0;
+            padding-left: 1.75rem;
+            position: relative;
+        }
+
+        .program-details li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Checklist */
+        .checklist {
+            margin-top: 1rem;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: background 0.2s;
+        }
+
+        .checklist-item:hover {
+            background: #f1f5f9;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-top: 0.2rem;
+            cursor: pointer;
+            accent-color: var(--success);
+        }
+
+        .checklist-item label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .checklist-item.checked label {
+            text-decoration: line-through;
+            color: var(--text-light);
+        }
+
+        /* Contact Info */
+        .contact-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+
+        .contact-box h5 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .contact-item a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .contact-item a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        /* Alert Box */
+        .alert-box {
+            background: #fef3c7;
+            border-left: 4px solid var(--secondary);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .alert-box strong {
+            color: #92400e;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Link Buttons */
+        .link-button {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .link-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        /* Requirements List */
+        .requirements {
+            background: #f0fdf4;
+            border: 2px solid #86efac;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .requirements h5 {
+            color: #166534;
+            margin-bottom: 0.5rem;
+        }
+
+        .requirements ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .requirements li {
+            padding: 0.25rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .requirements li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.75rem;
+            }
+
+            .pathway-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pathway-content {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Career Pathway Explorer</h1>
+            <p>Discover your future. Choose a pathway to get started.</p>
+        </div>
+
+        <!-- Home View - Pathway Cards -->
+        <div id="homeView" class="pathway-grid">
+            <div class="pathway-card" onclick="showPathway('publicSafety')">
+                <span class="pathway-icon">🚒</span>
+                <h3>Public Safety</h3>
+                <p>Police, Fire, EMT & Military</p>
+            </div>
+
+            <div class="pathway-card" onclick="showPathway('healthcare')">
+                <span class="pathway-icon">⚕️</span>
+                <h3>Healthcare & Wellness</h3>
+                <p>Medical, Nursing & Health Sciences</p>
+            </div>
+
+            <div class="pathway-card" onclick="showPathway('technology')">
+                <span class="pathway-icon">💻</span>
+                <h3>Technology & CS</h3>
+                <p>Software, Cybersecurity & IT</p>
+            </div>
+
+            <div class="pathway-card" onclick="showPathway('engineering')">
+                <span class="pathway-icon">🔧</span>
+                <h3>Engineering & Trades</h3>
+                <p>Construction, Electrical & Mechanical</p>
+            </div>
+
+            <div class="pathway-card" onclick="showPathway('business')">
+                <span class="pathway-icon">💼</span>
+                <h3>Business & Finance</h3>
+                <p>Entrepreneurship, Marketing & Accounting</p>
+            </div>
+
+            <div class="pathway-card" onclick="showPathway('arts')">
+                <span class="pathway-icon">🎨</span>
+                <h3>Arts, Media & Design</h3>
+                <p>Graphic Design, Film & Music</p>
+            </div>
+
+            <div class="pathway-card" onclick="showPathway('education')">
+                <span class="pathway-icon">📚</span>
+                <h3>Education & Human Services</h3>
+                <p>Teaching, Counseling & Social Work</p>
+            </div>
+
+            <div class="pathway-card" onclick="showPathway('agriculture')">
+                <span class="pathway-icon">🌱</span>
+                <h3>Agriculture & Environment</h3>
+                <p>Sustainability, Conservation & Farming</p>
+            </div>
+
+            <div class="pathway-card" onclick="showPathway('transportation')">
+                <span class="pathway-icon">✈️</span>
+                <h3>Transportation & Aviation</h3>
+                <p>Logistics, Aviation & Fleet Management</p>
+            </div>
+
+            <div class="pathway-card" onclick="showPathway('hospitality')">
+                <span class="pathway-icon">🍳</span>
+                <h3>Hospitality & Culinary</h3>
+                <p>Tourism, Hotels & Restaurant Management</p>
+            </div>
+
+            <div class="pathway-card" onclick="showPathway('law')">
+                <span class="pathway-icon">⚖️</span>
+                <h3>Law & Government</h3>
+                <p>Legal, Policy & Public Administration</p>
+            </div>
+
+            <div class="pathway-card" onclick="showPathway('science')">
+                <span class="pathway-icon">🔬</span>
+                <h3>Science & Research</h3>
+                <p>Biology, Chemistry & Physics</p>
+            </div>
+        </div>
+
+        <!-- Detail Views -->
+        <!-- PUBLIC SAFETY PATHWAY -->
+        <div id="publicSafety" class="detail-view">
+            <button class="back-button" onclick="showHome()">← Back to All Pathways</button>
+            
+            <div class="pathway-content">
+                <div class="pathway-header">
+                    <h2>🚒 Public Safety Pathway</h2>
+                    <p class="subtitle">Firefighting, Law Enforcement, EMT & Military Careers</p>
+                </div>
+
+                <!-- STEP 1: Foundation -->
+                <div class="step-section">
+                    <div class="step-header">
+                        <div class="step-number">1</div>
+                        <h3>Build Your Foundation</h3>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-intro">
+                            <strong>🎯 Start Here:</strong> All public safety careers require CPR certification and emergency response training. This is your first step.
+                        </div>
+
+                        <div class="program-card">
+                            <h4>
+                                Emergency Medical Responder 100
+                                <span class="program-badge">Required</span>
+                            </h4>
+                            <p><strong>Santa Rosa Junior College - Dual Enrollment</strong></p>
+                            
+                            <div class="program-details">
+                                <p><strong>What You'll Learn:</strong></p>
+                                <ul>
+                                    <li>How to respond to medical emergencies</li>
+                                    <li>Hands-on problem-solving skills</li>
+                                    <li>CPR certification for healthcare providers</li>
+                                </ul>
+                            </div>
+
+                            <a href="#" class="link-button" target="_blank">📝 Register for Summer 2026</a>
+
+                            <div class="contact-box">
+                                <h5>📞 Program Contact</h5>
+                                <div class="contact-item">
+                                    <span>👤</span>
+                                    <span>Mrs. Nikki Soto</span>
+                                </div>
+                                <div class="contact-item">
+                                    <span>📧</span>
+                                    <a href="mailto:nsoto@santarosa.edu">nsoto@santarosa.edu</a>
+                                </div>
+                                <div class="contact-item">
+                                    <span>📱</span>
+                                    <a href="tel:7078362907">(707) 836-2907</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="checklist">
+                            <div class="checklist-item">
+                                <input type="checkbox" id="check-emr" onchange="saveProgress()">
+                                <label for="check-emr">Register for Emergency Medical Responder 100 at SRJC</label>
+                            </div>
+                            <div class="checklist-item">
+                                <input type="checkbox" id="check-cpr" onchange="saveProgress()">
+                                <label for="check-cpr">Complete CPR certification</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Choose Your Path -->
+                <div class="step-section">
+                    <div class="step-header">
+                        <div class="step-number">2</div>
+                        <h3>Choose Your Specialty & Gain Experience</h3>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-intro">
+                            <strong>🔥 Pick the path that interests you most.</strong> Each explorer program gives you real-world experience and helps you decide if this career is right for you.
+                        </div>
+
+                        <!-- FIREFIGHTING -->
+                        <div class="program-card">
+                            <h4>🚒 FIREFIGHTING PATHWAY</h4>
+                            
+                            <p><strong>Sonoma County Fire Explorer Program</strong></p>
+                            <div class="program-details">
+                                <p><strong>What You'll Do:</strong></p>
+                                <ul>
+                                    <li>Weekly training at fire stations</li>
+                                    <li>Learn foundational fire service skills</li>
+                                    <li>Work with real firefighters and mentors</li>
+                                </ul>
+                            </div>
+
+                            <div class="requirements">
+                                <h5>✓ Eligibility Requirements:</h5>
+                                <ul>
+                                    <li>Ages 14-20 (must have completed 8th grade)</li>
+                                    <li>Minimum 2.5 GPA</li>
+                                    <li>Attend two initial drills before applying</li>
+                                    <li>Pass an interview</li>
+                                </ul>
+                            </div>
+
+                            <div class="alert-box">
+                                <strong>⚠️ This is a selective program.</strong>
+                                Write a thoughtful, professional email. First impressions matter!
+                            </div>
+
+                            <a href="#" class="link-button" target="_blank">📝 Complete Interest Card</a>
+
+                            <div class="contact-box">
+                                <h5>📧 Contacts (Send a professional email)</h5>
+                                <div class="contact-item">
+                                    <span>👤</span>
+                                    <span>Captain Selfridge: </span>
+                                    <a href="mailto:jselfridge@sonomacountyfd.org">jselfridge@sonomacountyfd.org</a>
+                                </div>
+                                <div class="contact-item">
+                                    <span>👤</span>
+                                    <span>Engineer Engle: </span>
+                                    <a href="mailto:eengle@sonomacountyfd.org">eengle@sonomacountyfd.org</a>
+                                </div>
+                            </div>
+
+                            <hr style="margin: 1.5rem 0; border: none; border-top: 2px solid var(--border);">
+
+                            <p><strong>Sonoma County Fire Department - Shadow Day</strong></p>
+                            <p>Want to see what a day in the life looks like? Shadow a firefighter for a day.</p>
+                            <a href="#" class="link-button" target="_blank">🔍 Apply for Shadow Day</a>
+                            <div class="contact-box" style="margin-top: 1rem;">
+                                <div class="contact-item">
+                                    <span>📧</span>
+                                    <span>Contact: </span>
+                                    <a href="mailto:SRFD@srcity.org">Mr. Lagourgue - SRFD@srcity.org</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- LAW ENFORCEMENT -->
+                        <div class="program-card">
+                            <h4>👮 LAW ENFORCEMENT PATHWAY</h4>
+                            
+                            <p><strong>Sonoma County Sheriff Explorer Program</strong></p>
+                            <div class="program-details">
+                                <p><strong>Training Includes:</strong></p>
+                                <ul>
+                                    <li>Laws of arrest</li>
+                                    <li>Defensive tactics</li>
+                                    <li>Crime scene management</li>
+                                    <li>Report writing & communication systems</li>
+                                    <li>Ride-along experiences</li>
+                                </ul>
+                            </div>
+
+                            <div class="alert-box">
+                                <strong>⚠️ This is a selective program.</strong>
+                                Professional communication is essential. Proofread your email!
+                            </div>
+
+                            <div class="contact-box">
+                                <h5>📧 Application Contact</h5>
+                                <div class="contact-item">
+                                    <span>Send email to: </span>
+                                    <a href="mailto:Kelsey.Stewart@sonoma-county.org">Kelsey.Stewart@sonoma-county.org</a>
+                                </div>
+                            </div>
+
+                            <hr style="margin: 1.5rem 0; border: none; border-top: 2px solid var(--border);">
+
+                            <p><strong>Santa Rosa Police Department - Ride-Along</strong></p>
+                            <p>See what police work is really like. Must be 16+.</p>
+                            <a href="#" class="link-button" target="_blank">🚔 Apply for Ride-Along</a>
+                            <div class="contact-box" style="margin-top: 1rem;">
+                                <div class="contact-item">
+                                    <span>📧</span>
+                                    <a href="mailto:pseffens@srcity.org">Sgt. Patricia Seffens - pseffens@srcity.org</a>
+                                </div>
+                            </div>
+
+                            <hr style="margin: 1.5rem 0; border: none; border-top: 2px solid var(--border);">
+
+                            <p><strong>🌟 Summer Opportunity: Youth Community Academy</strong></p>
+                            <div class="program-details">
+                                <ul>
+                                    <li>5-day summer academy</li>
+                                    <li>Ages 14-18</li>
+                                    <li>~25 students accepted</li>
+                                    <li><strong>Applications open April 20, 2026</strong></li>
+                                </ul>
+                            </div>
+                            <div class="alert-box">
+                                <strong>💡 Pro Tip:</strong> This program often selects students already in Explorer programs. Apply to Explorer first to boost your chances!
+                            </div>
+                        </div>
+
+                        <!-- EXPLORING MULTIPLE -->
+                        <div class="program-card">
+                            <h4>🔍 NOT SURE YET? Explore Multiple Fields</h4>
+                            
+                            <p><strong>Rohnert Park Explorer Program</strong></p>
+                            <p>Perfect if you're interested in Fire, Police, AND Military but want to explore all options before committing.</p>
+                            
+                            <div class="program-details">
+                                <p><strong>What You'll Experience:</strong></p>
+                                <ul>
+                                    <li>Exposure to multiple public safety fields</li>
+                                    <li>Ride-alongs across different departments</li>
+                                    <li>Physical fitness & leadership development</li>
+                                    <li>Team building & responsibility training</li>
+                                </ul>
+                            </div>
+
+                            <div class="requirements">
+                                <h5>✓ Eligibility Requirements:</h5>
+                                <ul>
+                                    <li>Ages 14-20</li>
+                                    <li>Minimum 2.5 GPA</li>
+                                </ul>
+                            </div>
+
+                            <div class="contact-box">
+                                <h5>📞 Program Contact</h5>
+                                <div class="contact-item">
+                                    <span>👤</span>
+                                    <span>Nicole Litzie</span>
+                                </div>
+                                <div class="contact-item">
+                                    <span>📱</span>
+                                    <a href="tel:7075842646">(707) 584-2646</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="checklist">
+                            <div class="checklist-item">
+                                <input type="checkbox" id="check-explorer" onchange="saveProgress()">
+                                <label for="check-explorer">Apply to an Explorer Program (Fire, Police, or Multi-Field)</label>
+                            </div>
+                            <div class="checklist-item">
+                                <input type="checkbox" id="check-shadow" onchange="saveProgress()">
+                                <label for="check-shadow">Complete a shadow day or ride-along</label>
+                            </div>
+                            <div class="checklist-item">
+                                <input type="checkbox" id="check-summer" onchange="saveProgress()">
+                                <label for="check-summer">Apply for Youth Community Academy (if interested)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 3: Next Steps -->
+                <div class="step-section">
+                    <div class="step-header">
+                        <div class="step-number">3</div>
+                        <h3>Keep Growing & Stay Connected</h3>
+                    </div>
+                    <div class="step-content">
+                        <div class="program-card">
+                            <h4>💡 Important Reminders</h4>
+                            <ul>
+                                <li><strong>Your interests may evolve</strong> — That's totally normal! Exploring different programs helps you find the right fit.</li>
+                                <li><strong>Follow up professionally</strong> — If you don't hear back after applying, send a polite follow-up email.</li>
+                                <li><strong>Keep your GPA up</strong> — Most programs require minimum 2.5 GPA.</li>
+                                <li><strong>Ask for help</strong> — Need support with applications or emails? Reach out to your counselor!</li>
+                            </ul>
+                        </div>
+
+                        <div class="checklist">
+                            <div class="checklist-item">
+                                <input type="checkbox" id="check-gpa" onchange="saveProgress()">
+                                <label for="check-gpa">Maintain 2.5+ GPA</label>
+                            </div>
+                            <div class="checklist-item">
+                                <input type="checkbox" id="check-followup" onchange="saveProgress()">
+                                <label for="check-followup">Send follow-up emails if needed</label>
+                            </div>
+                            <div class="checklist-item">
+                                <input type="checkbox" id="check-counselor" onchange="saveProgress()">
+                                <label for="check-counselor">Meet with counselor to discuss next steps</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ENGINEERING & TRADES PATHWAY -->
+        <div id="engineering" class="detail-view">
+            <button class="back-button" onclick="showHome()">← Back to All Pathways</button>
+            
+            <div class="pathway-content">
+                <div class="pathway-header">
+                    <h2>🔧 Engineering & Skilled Trades</h2>
+                    <p class="subtitle">Construction, Electrical, Mechanical & More</p>
+                </div>
+
+                <div class="step-section">
+                    <div class="step-content">
+                        <div class="alert-box">
+                            <strong>📝 Content Coming Soon!</strong>
+                            This pathway is being developed. Check back soon or contact your counselor for more information about Engineering & Skilled Trades opportunities.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PLACEHOLDER PATHWAYS (You'll add content for these) -->
+        <div id="healthcare" class="detail-view">
+            <button class="back-button" onclick="showHome()">← Back to All Pathways</button>
+            <div class="pathway-content">
+                <div class="pathway-header">
+                    <h2>⚕️ Healthcare & Wellness</h2>
+                    <p class="subtitle">Medical, Nursing & Health Sciences</p>
+                </div>
+                <div class="alert-box">
+                    <strong>📝 Content Coming Soon!</strong>
+                    Contact your counselor for Healthcare pathway information.
+                </div>
+            </div>
+        </div>
+
+        <div id="technology" class="detail-view">
+            <button class="back-button" onclick="showHome()">← Back to All Pathways</button>
+            <div class="pathway-content">
+                <div class="pathway-header">
+                    <h2>💻 Technology & Computer Science</h2>
+                    <p class="subtitle">Software, Cybersecurity & IT</p>
+                </div>
+                <div class="alert-box">
+                    <strong>📝 Content Coming Soon!</strong>
+                    Contact your counselor for Technology pathway information.
+                </div>
+            </div>
+        </div>
+
+        <div id="business" class="detail-view">
+            <button class="back-button" onclick="showHome()">← Back to All Pathways</button>
+            <div class="pathway-content">
+                <div class="pathway-header">
+                    <h2>💼 Business, Finance & Entrepreneurship</h2>
+                    <p class="subtitle">Marketing, Accounting & Startups</p>
+                </div>
+                <div class="alert-box">
+                    <strong>📝 Content Coming Soon!</strong>
+                    Contact your counselor for Business pathway information.
+                </div>
+            </div>
+        </div>
+
+        <div id="arts" class="detail-view">
+            <button class="back-button" onclick="showHome()">← Back to All Pathways</button>
+            <div class="pathway-content">
+                <div class="pathway-header">
+                    <h2>🎨 Arts, Media & Design</h2>
+                    <p class="subtitle">Graphic Design, Film & Music</p>
+                </div>
+                <div class="alert-box">
+                    <strong>📝 Content Coming Soon!</strong>
+                    Contact your counselor for Arts pathway information.
+                </div>
+            </div>
+        </div>
+
+        <div id="education" class="detail-view">
+            <button class="back-button" onclick="showHome()">← Back to All Pathways</button>
+            <div class="pathway-content">
+                <div class="pathway-header">
+                    <h2>📚 Education & Human Services</h2>
+                    <p class="subtitle">Teaching, Counseling & Social Work</p>
+                </div>
+                <div class="alert-box">
+                    <strong>📝 Content Coming Soon!</strong>
+                    Contact your counselor for Education pathway information.
+                </div>
+            </div>
+        </div>
+
+        <div id="agriculture" class="detail-view">
+            <button class="back-button" onclick="showHome()">← Back to All Pathways</button>
+            <div class="pathway-content">
+                <div class="pathway-header">
+                    <h2>🌱 Agriculture, Environment & Sustainability</h2>
+                    <p class="subtitle">Conservation, Farming & Environmental Science</p>
+                </div>
+                <div class="alert-box">
+                    <strong>📝 Content Coming Soon!</strong>
+                    Contact your counselor for Agriculture pathway information.
+                </div>
+            </div>
+        </div>
+
+        <div id="transportation" class="detail-view">
+            <button class="back-button" onclick="showHome()">← Back to All Pathways</button>
+            <div class="pathway-content">
+                <div class="pathway-header">
+                    <h2>✈️ Transportation, Aviation & Logistics</h2>
+                    <p class="subtitle">Aviation, Fleet Management & Supply Chain</p>
+                </div>
+                <div class="alert-box">
+                    <strong>📝 Content Coming Soon!</strong>
+                    Contact your counselor for Transportation pathway information.
+                </div>
+            </div>
+        </div>
+
+        <div id="hospitality" class="detail-view">
+            <button class="back-button" onclick="showHome()">← Back to All Pathways</button>
+            <div class="pathway-content">
+                <div class="pathway-header">
+                    <h2>🍳 Hospitality, Tourism & Culinary Arts</h2>
+                    <p class="subtitle">Hotels, Restaurants & Event Management</p>
+                </div>
+                <div class="alert-box">
+                    <strong>📝 Content Coming Soon!</strong>
+                    Contact your counselor for Hospitality pathway information.
+                </div>
+            </div>
+        </div>
+
+        <div id="law" class="detail-view">
+            <button class="back-button" onclick="showHome()">← Back to All Pathways</button>
+            <div class="pathway-content">
+                <div class="pathway-header">
+                    <h2>⚖️ Law, Government & Policy</h2>
+                    <p class="subtitle">Legal, Public Administration & Political Science</p>
+                </div>
+                <div class="alert-box">
+                    <strong>📝 Content Coming Soon!</strong>
+                    Contact your counselor for Law pathway information.
+                </div>
+            </div>
+        </div>
+
+        <div id="science" class="detail-view">
+            <button class="back-button" onclick="showHome()">← Back to All Pathways</button>
+            <div class="pathway-content">
+                <div class="pathway-header">
+                    <h2>🔬 Science & Research</h2>
+                    <p class="subtitle">Biology, Chemistry, Physics & Lab Sciences</p>
+                </div>
+                <div class="alert-box">
+                    <strong>📝 Content Coming Soon!</strong>
+                    Contact your counselor for Science pathway information.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation
+        function showPathway(pathwayId) {
+            document.getElementById('homeView').style.display = 'none';
+            document.querySelectorAll('.detail-view').forEach(view => {
+                view.classList.remove('active');
+            });
+            document.getElementById(pathwayId).classList.add('active');
+            window.scrollTo(0, 0);
+            loadProgress();
+        }
+
+        function showHome() {
+            document.getElementById('homeView').style.display = 'grid';
+            document.querySelectorAll('.detail-view').forEach(view => {
+                view.classList.remove('active');
+            });
+            window.scrollTo(0, 0);
+        }
+
+        // Progress Tracking
+        function saveProgress() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const progress = {};
+            checkboxes.forEach(checkbox => {
+                progress[checkbox.id] = checkbox.checked;
+                // Update parent styling
+                const parent = checkbox.closest('.checklist-item');
+                if (checkbox.checked) {
+                    parent.classList.add('checked');
+                } else {
+                    parent.classList.remove('checked');
+                }
+            });
+            localStorage.setItem('careerPathwayProgress', JSON.stringify(progress));
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('careerPathwayProgress');
+            if (saved) {
+                const progress = JSON.parse(saved);
+                Object.keys(progress).forEach(id => {
+                    const checkbox = document.getElementById(id);
+                    if (checkbox) {
+                        checkbox.checked = progress[id];
+                        const parent = checkbox.closest('.checklist-item');
+                        if (progress[id]) {
+                            parent.classList.add('checked');
+                        }
+                    }
+                });
+            }
+        }
+
+        // Load progress on page load
+        window.addEventListener('load', loadProgress);
+    </script>
+</body>
+</html>
